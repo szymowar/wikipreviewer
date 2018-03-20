@@ -48,6 +48,15 @@ table {
 }
 /*=======================================================================*/
 
+h3 {
+	font-size: 1em;
+	font-weight: bold;
+}
+p {
+	margin: 10px;
+	font-size: 0.5em;
+}
+
 #random {
     cursor: pointer;
 }

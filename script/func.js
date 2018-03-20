@@ -19,7 +19,24 @@ function searchWiki (search) {
     },
     dataType: 'jsonp',
     success: function (data) {
-        console.log('title', data.query.search[0].snippet);
+
+        var container = document.querySelector("#result-container");
+        if(container != null){
+            while (container.firstChild){
+                container.removeChild(container.firstChild);
+                    }
+                }
+
+        for(var i = 0; i < 10; i++){
+            var title = document.createElement("H3");
+            var para = document.createElement("P");
+            var wikiTitle = document.createTextNode(data.query.search[i].title);
+            var wikiSnippet = document.createTextNode(data.query.search[i].snippet);
+            title.appendChild(wikiTitle);
+            para.appendChild(wikiSnippet);
+            document.getElementById("result-container").appendChild(title);
+            document.getElementById("result-container").appendChild(para);
+                }
             }
     });
 }
@@ -41,16 +58,21 @@ function inactive(){
         sb.value = "Search...";
     }
 }
+function getWikiPost(e){
+    if(e.keyCode == 13){
+            searchWiki(this.value);
+        }
+}
 
 
 
 
 $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
-    searchValue.addEventListener("keydown", function (e){
-        if(e.keyCode == 13){
-                searchWiki(searchValue.value);
-            }
+    var goBtn = document.querySelector('#searchBtn');
+    searchValue.addEventListener("keydown", getWikiPost );
+    goBtn.addEventListener("click", function (e){
+            searchWiki(searchValue.value);
     });
     getRandomPost();
 
