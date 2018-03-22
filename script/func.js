@@ -7,6 +7,42 @@ function getRandomPost(){
     });
 }
 
+function createResultBox(data) {
+    var container = document.querySelector("#result-container"),
+        i,linkBox, resBox, title, para, wikiTitle, wikiSnippet, noMatchFound,
+        urlRedirect = "https://en.wikipedia.org/wiki/Special:Redirect/page/";
+
+    if(container != null){
+        while (container.firstChild){
+            container.removeChild(container.firstChild);
+                }
+            }
+    for(i = 0; i < 10; i++){
+        linkBox =document.createElement("A");
+        resBox = document.createElement("DIV");
+        resBox.id = "result-box";
+        if(data.query.search[i] == undefined){
+            title = document.createElement("H3");
+            noMatchFound = document.createTextNode(`${i}` + " match found");
+            title.appendChild(noMatchFound);
+            resBox.appendChild(title);
+            container.appendChild(resBox);
+            break;
+        }
+        title = document.createElement("H3");
+        para = document.createElement("P");
+        linkBox.setAttribute("href", urlRedirect + data.query.search[i].pageid);
+        wikiTitle = document.createTextNode(data.query.search[i].title);
+        wikiSnippet = document.createTextNode(data.query.search[i].snippet);
+        title.appendChild(wikiTitle);
+        para.appendChild(wikiSnippet);
+        resBox.appendChild(title);
+        resBox.appendChild(para);
+        linkBox.appendChild(resBox);
+        container.appendChild(linkBox);
+            }
+        }
+
 function searchWiki (search) {
     $.ajax({
     url: 'https://en.wikipedia.org/w/api.php',
@@ -18,41 +54,12 @@ function searchWiki (search) {
         formatversion: 2
     },
     dataType: 'jsonp',
-    success: function (data) {
-        var container = document.querySelector("#result-container");
-
-        console.log(data.query.search)
-        if(container != null){
-            while (container.firstChild){
-                container.removeChild(container.firstChild);
-                    }
-                }
-        for(var i = 0; i < 10; i++){
-            var linkBox =document.createElement("A");
-            var resBox = document.createElement("DIV");
-            resBox.id = "result-box";
-            console.log(search.value);
-            if(data.query.search[i] == undefined){
-                var title = document.createElement("H3");
-                var noMatchFound = document.createTextNode(`${i}` + " match found");
-                title.appendChild(noMatchFound);
-                resBox.appendChild(title);
-                container.appendChild(resBox);
-                break;
-            }
-            var title = document.createElement("H3");
-            var para = document.createElement("P");
-            linkBox.setAttribute("href", "https://en.wikipedia.org/wiki/Special:Redirect/page/" + data.query.search[i].pageid);
-            var wikiTitle = document.createTextNode(data.query.search[i].title);
-            var wikiSnippet = document.createTextNode(data.query.search[i].snippet);
-            title.appendChild(wikiTitle);
-            para.appendChild(wikiSnippet);
-            resBox.appendChild(title);
-            resBox.appendChild(para);
-            linkBox.appendChild(resBox);
-            container.appendChild(linkBox);
-                }
-            }
+    success: function(data) {
+        createResultBox(data);
+    },
+    error: function(xhr, status, error){
+        console.error(xhr,status,error);
+    }
     });
 }
 
@@ -80,9 +87,6 @@ function getWikiPost(e){
         }
 }
 
-
-
-
 $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
     var goBtn = document.querySelector('#searchBtn');
@@ -91,5 +95,4 @@ $(document).ready(function () {
             searchWiki(searchValue.value);
     });
     getRandomPost();
-
 });
