@@ -19,23 +19,38 @@ function searchWiki (search) {
     },
     dataType: 'jsonp',
     success: function (data) {
-
         var container = document.querySelector("#result-container");
+
+        console.log(data.query.search)
         if(container != null){
             while (container.firstChild){
                 container.removeChild(container.firstChild);
                     }
                 }
-
         for(var i = 0; i < 10; i++){
+            var linkBox =document.createElement("A");
+            var resBox = document.createElement("DIV");
+            resBox.id = "result-box";
+            console.log(search.value);
+            if(data.query.search[i] == undefined){
+                var title = document.createElement("H3");
+                var noMatchFound = document.createTextNode(`${i}` + " match found");
+                title.appendChild(noMatchFound);
+                resBox.appendChild(title);
+                container.appendChild(resBox);
+                break;
+            }
             var title = document.createElement("H3");
             var para = document.createElement("P");
+            linkBox.setAttribute("href", "https://en.wikipedia.org/wiki/Special:Redirect/page/" + data.query.search[i].pageid);
             var wikiTitle = document.createTextNode(data.query.search[i].title);
             var wikiSnippet = document.createTextNode(data.query.search[i].snippet);
             title.appendChild(wikiTitle);
             para.appendChild(wikiSnippet);
-            document.getElementById("result-container").appendChild(title);
-            document.getElementById("result-container").appendChild(para);
+            resBox.appendChild(title);
+            resBox.appendChild(para);
+            linkBox.appendChild(resBox);
+            container.appendChild(linkBox);
                 }
             }
     });
@@ -59,7 +74,8 @@ function inactive(){
     }
 }
 function getWikiPost(e){
-    if(e.keyCode == 13){
+
+    if(e.keyCode == 13 && this.value != ""){
             searchWiki(this.value);
         }
 }
