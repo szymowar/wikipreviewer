@@ -1,22 +1,33 @@
 function getRandomPost(){
-    var rand = document.querySelector('#random');
-    var url = "https://en.wikipedia.org/wiki/Special:Random";
+    var rand = document.querySelector('#random'),
+    url = "https://en.wikipedia.org/wiki/Special:Random";
 
     rand.addEventListener('click', function(e){
         window.open(url, '_blank');
     });
 }
 
+function cleanContent(str) {
+	var reg = /<.*?>/g;
+  str = str.replace(reg, '');
+  return str;
+}
+
+function deleteItems(container){
+    if(container != null){
+        while (container.firstChild){
+            container.removeChild(container.firstChild);
+            }
+        }
+    }
+
 function createResultBox(data) {
     var container = document.querySelector("#result-container"),
         i,linkBox, resBox, title, para, wikiTitle, wikiSnippet, noMatchFound,
         urlRedirect = "https://en.wikipedia.org/wiki/Special:Redirect/page/";
 
-    if(container != null){
-        while (container.firstChild){
-            container.removeChild(container.firstChild);
-                }
-            }
+    deleteItems(container);
+
     for(i = 0; i < 10; i++){
         linkBox =document.createElement("A");
         resBox = document.createElement("DIV");
@@ -33,7 +44,8 @@ function createResultBox(data) {
         para = document.createElement("P");
         linkBox.setAttribute("href", urlRedirect + data.query.search[i].pageid);
         wikiTitle = document.createTextNode(data.query.search[i].title);
-        wikiSnippet = document.createTextNode(data.query.search[i].snippet);
+        wikiSnippet = cleanContent(data.query.search[i].snippet);
+        wikiSnippet = document.createTextNode(wikiSnippet);
         title.appendChild(wikiTitle);
         para.appendChild(wikiSnippet);
         resBox.appendChild(title);
@@ -51,14 +63,15 @@ function searchWiki (search) {
         list: 'search',
         srsearch: search,
         format: 'json',
-        formatversion: 2
+        formatversion: 2,
+        suggest: 1
     },
     dataType: 'jsonp',
     success: function(data) {
         createResultBox(data);
     },
     error: function(xhr, status, error){
-        console.error(xhr,status,error);
+        console.error(error);
     }
     });
 }
@@ -89,10 +102,11 @@ function getWikiPost(e){
 
 $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
-    var goBtn = document.querySelector('#searchBtn');
-    searchValue.addEventListener("keydown", getWikiPost );
-    goBtn.addEventListener("click", function (e){
-            searchWiki(searchValue.value);
+    var clearBtn = document.querySelector('#searchBtn');
+    var cont = document.querySelector('#result-container');
+        searchValue.addEventListener("keydown", getWikiPost);
+    clearBtn.addEventListener("click", function (e) {
+        deleteItems(cont);
     });
     getRandomPost();
 });
