@@ -1,38 +1,49 @@
-function getRandomPost(){
+function getRandomPost() {
+    "use strict";
     var rand = document.querySelector('#random'),
-    url = "https://en.wikipedia.org/wiki/Special:Random";
+        url = "https://en.wikipedia.org/wiki/Special:Random";
 
-    rand.addEventListener('click', function(e){
+    rand.addEventListener('click', function () {
         window.open(url, '_blank');
     });
 }
 
 function cleanContent(str) {
-	var reg = /<.*?>/g;
-  str = str.replace(reg, '');
-  return str;
+    "use strict";
+	   var reg = /<.*?>/g;
+    str = str.replace(reg, '');
+    return str;
 }
 
-function deleteItems(container){
-    if(container != null){
-        while (container.firstChild){
+function deleteItems(container) {
+    "use strict";
+    if (container !== null) {
+        while (container.firstChild) {
             container.removeChild(container.firstChild);
-            }
         }
     }
+}
 
 function createResultBox(data) {
+    "use strict";
     var container = document.querySelector("#result-container"),
-        i,linkBox, resBox, title, para, wikiTitle, wikiSnippet, noMatchFound,
+        i,
+        linkBox,
+        resBox,
+        title,
+        para,
+        wikiTitle,
+        wikiSnippet,
+        noMatchFound,
         urlRedirect = "https://en.wikipedia.org/wiki/Special:Redirect/page/";
 
     deleteItems(container);
 
-    for(i = 0; i < 10; i++){
-        linkBox =document.createElement("A");
+    for (i = 0; i < 10; i += 1) {
+        linkBox = document.createElement("A");
         resBox = document.createElement("DIV");
         resBox.id = "result-box";
-        if(data.query.search[i] == undefined){
+        if (data.query.search[i] === undefined) {
             title = document.createElement("H3");
             noMatchFound = document.createTextNode(`${i}` + " match found");
             title.appendChild(noMatchFound);
@@ -105,8 +116,23 @@ $(document).ready(function () {
     var clearBtn = document.querySelector('#searchBtn');
     var cont = document.querySelector('#result-container');
         searchValue.addEventListener("keydown", getWikiPost);
-    clearBtn.addEventListener("click", function (e) {
-        deleteItems(cont);
+        searchValue.addEventListener("input", function(){
+            $.ajax({
+            url: 'https://en.wikipedia.org/w/api.php',
+            data: {
+                action: 'opensearch',
+                limit: 10,
+                search: searchValue.value,
+                format: 'json',
+
+            },
+            dataType: 'jsonp',
+            success: function (data){
+                console.log(data[1]);
+            }});
+        })
+        clearBtn.addEventListener("click", function (e) {
+            deleteItems(cont);
     });
     getRandomPost();
 });
