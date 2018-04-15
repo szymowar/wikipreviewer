@@ -123,12 +123,22 @@ $(document).ready(function () {
                 action: 'opensearch',
                 limit: 10,
                 search: searchValue.value,
-                format: 'json',
+                format: 'json'
 
             },
             dataType: 'jsonp',
             success: function (data){
-                console.log(data[1]);
+                var container = document.querySelector("#autocompleteContainer"),
+                    autocompleteBox,
+                    autocompleteText,
+                    i;
+                    deleteItems(container);
+                    for(i = 0; i < data[1].length; i += 1) {
+                        autocompleteBox = document.createElement("DIV");
+                        autocompleteText = document.createTextNode(data[1][i]);
+                        autocompleteBox.appendChild(autocompleteText);
+                        container.appendChild(autocompleteBox);
+                };
             }});
         })
         clearBtn.addEventListener("click", function (e) {
