@@ -1,3 +1,5 @@
+var LIMIT = 10;
+
 function getRandomPost() {
     "use strict";
     var rand = document.querySelector('#random'),
@@ -121,23 +123,34 @@ $(document).ready(function () {
             url: 'https://en.wikipedia.org/w/api.php',
             data: {
                 action: 'opensearch',
-                limit: 10,
+                limit: LIMIT,
                 search: searchValue.value,
                 format: 'json'
-
             },
             dataType: 'jsonp',
             success: function (data){
                 var container = document.querySelector("#autocompleteContainer"),
-                    autocompleteBox,
-                    autocompleteText,
-                    i;
+
+
+
                     deleteItems(container);
-                    for(i = 0; i < data[1].length; i += 1) {
-                        autocompleteBox = document.createElement("DIV");
-                        autocompleteText = document.createTextNode(data[1][i]);
-                        autocompleteBox.appendChild(autocompleteText);
-                        container.appendChild(autocompleteBox);
+                    if (data[1] === undefined) {
+                        return false;
+                    } else {
+                        var sv = searchValue.value;
+                        for(var i = 0; i < data[1].length; i += 1) {
+                            if(searchValue.value.toUpperCase() == data[1][i].substr(0, sv.length).toUpperCase()) {
+                                var autocompleteBox = document.createElement("DIV");
+                                    autocompleteBox.innerHTML = "<strong>" + data[1][i].substr(0,sv.length) + "</strong>";
+                                    autocompleteBox.innerHTML += data[1][i].substr(sv.length);
+                                    autocompleteBox.innerHTML += "<input type='hidden' value='" + data[1][i] +"'>";
+                                    container.appendChild(autocompleteBox);
+                            }
+                        container.addEventListener("click", function(e) {
+                            searchValue.value = e.toElement.innerText;
+                            deleteItems(container);
+                        });
+                    }
                 };
             }});
         })
