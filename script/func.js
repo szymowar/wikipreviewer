@@ -1,4 +1,7 @@
-var LIMIT = 10;
+
+var __GLOBAL_WV__ = {};
+    __GLOBAL_WV__.LIMIT = 10;
+    __GLOBAL_WV__.AUTOCOMDATA = 1;
 
 function getRandomPost() {
     "use strict";
@@ -15,6 +18,22 @@ function cleanContent(str) {
 	   var reg = /<.*?>/g;
     str = str.replace(reg, '');
     return str;
+}
+
+function removeActive(x){
+    for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+    }
+}
+
+function addActive(x){
+    if (!x) return false;
+    removeActive(x);
+    if (this.currentFocus >= x.length)
+        this.currentFocus = 0;
+    if (this.currentFocus < 0)
+        this.currentFocus = (x.length - 1);
+        x[this.currentFocus].classList.add("autocomplete-active");
 }
 
 function deleteItems(container) {
@@ -41,7 +60,7 @@ function createResultBox(data) {
 
     deleteItems(container);
 
-    for (i = 0; i < 10; i += 1) {
+    for (i = 0; i < __GLOBAL_WV__.LIMIT; i += 1) {
         linkBox = document.createElement("A");
         resBox = document.createElement("DIV");
         resBox.id = "result-box";
@@ -107,8 +126,8 @@ function inactive(){
     }
 }
 function getWikiPost(e){
-
-    if(e.keyCode == 13 && this.value != ""){
+    var enterKey = 13;
+    if(e.keyCode == enterKey && this.value != ""){
             searchWiki(this.value);
         }
 }
@@ -123,34 +142,42 @@ $(document).ready(function () {
             url: 'https://en.wikipedia.org/w/api.php',
             data: {
                 action: 'opensearch',
-                limit: LIMIT,
+                limit: __GLOBAL_WV__.LIMIT,
                 search: searchValue.value,
                 format: 'json'
             },
             dataType: 'jsonp',
             success: function (data){
                 var container = document.querySelector("#autocompleteContainer"),
-
-
-
+                    aD = __GLOBAL_WV__.AUTOCOMDATA;
                     deleteItems(container);
-                    if (data[1] === undefined) {
+                    if (data[aD] === undefined) {
                         return false;
                     } else {
                         var sv = searchValue.value;
-                        for(var i = 0; i < data[1].length; i += 1) {
-                            if(searchValue.value.toUpperCase() == data[1][i].substr(0, sv.length).toUpperCase()) {
+                        for(var i = 0; i < data[aD].length; i += 1) {
+                            if(sv.toUpperCase() == data[aD][i].substr(0, sv.length).toUpperCase()) {
                                 var autocompleteBox = document.createElement("DIV");
-                                    autocompleteBox.innerHTML = "<strong>" + data[1][i].substr(0,sv.length) + "</strong>";
-                                    autocompleteBox.innerHTML += data[1][i].substr(sv.length);
-                                    autocompleteBox.innerHTML += "<input type='hidden' value='" + data[1][i] +"'>";
+                                    autocompleteBox.setAttribute("class", "autocomplete")
+                                    autocompleteBox.innerHTML = "<strong>" + data[aD][i].substr(0,sv.length) + "</strong>";
+                                    autocompleteBox.innerHTML += data[aD][i].substr(sv.length);
                                     container.appendChild(autocompleteBox);
                             }
-                        container.addEventListener("click", function(e) {
-                            searchValue.value = e.toElement.innerText;
-                            deleteItems(container);
-                        });
                     }
+                    var searchB = document.getElementById("searchBar");
+                    searchB.addEventListener("keydown", function(e) {
+                        var currentFocus = 0;
+                        var x = container.getElementsByClassName("autocomplete")
+                        if (e.keyCode == 40){
+                            console.log(x[1].classList.add("autocomplete-active"));
+                            addActive(x);
+                        }
+                    });
+                    container.addEventListener("click", function(e) {
+                        var svalue = document.querySelector("#searchBar");
+                        svalue.value = e.toElement.innerText;
+                        deleteItems(container);
+                    });
                 };
             }});
         })

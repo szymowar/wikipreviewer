@@ -47,6 +47,9 @@ table {
 	border-spacing: 0;
 }
 /*=======================================================================*/
+strong {
+	font-weight: bold;
+}
 body {
 	background-color: #FB9902;
 
@@ -145,4 +148,7 @@ Search bar
 =============================================================================*/
 .autocomplete {
 	display: block;
+}
+.autocomplete-active {
+	border: 5px solid red;
 }
