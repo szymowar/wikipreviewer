@@ -28,8 +28,9 @@ function removeActive(x){
 }
 
 function addActive(x){
-    if (!x)
+    if (!x){
         return;
+    }
         removeActive(x);
     if (this.currentFocus >= x.length)
         this.currentFocus = 0;
@@ -89,31 +90,21 @@ function createResultBox(data) {
             }
         }
 
-function autocomplete() {
-    $.ajax({
-    url: 'https://en.wikipedia.org/w/api.php',
-    data: {
-        action: 'opensearch',
-        limit: __GLOBAL_WV__.LIMIT,
-        search: this.value,
-        format: 'json'
-    },
-    dataType: 'jsonp',
-    success: function (data){
+function autocompleteBoxBuild (data) {
         var container = document.querySelector("#autocompleteContainer"),
-            aD = 1;
+            aD = data[1];
             deleteItems(container);
-            if (data[aD] === undefined) {
+            if (aD === undefined) {
                 return;
             } else {
                 var sv = data[0];
-                for(var i = 0; i < data[aD].length; i += 1) {
-                    var data_autocom = data[aD][i].substr(0,sv.length);
+                for(var i = 0; i < aD.length; i += 1) {
+                    var data_autocom = aD[i].substr(0,sv.length);
                     if(sv.toUpperCase() == data_autocom.toUpperCase()) {
                         var autocompleteBox = document.createElement("DIV");
                             autocompleteBox.setAttribute("class", "autocomplete")
                             autocompleteBox.innerHTML = "<strong>" + data_autocom + "</strong>";
-                            autocompleteBox.innerHTML += data[aD][i].substr(sv.length);
+                            autocompleteBox.innerHTML += aD[i].substr(sv.length);
                             container.appendChild(autocompleteBox);
                     }
             }
@@ -121,8 +112,7 @@ function autocomplete() {
             searchB.addEventListener("keydown", function(e) {
                 var currentFocus = 0;
                 var x = container.getElementsByClassName("autocomplete")
-                var key_down_arrow = __GLOBAL_WV__.KEY_CODE_DOWN_ARROW;
-                if (e.keyCode == key_down_arrow){
+                if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
                     console.log(x[1].classList.add("autocomplete-active"));
                     addActive(x);
                 }
@@ -134,6 +124,19 @@ function autocomplete() {
             });
         };
         }
+
+
+function autocomplete() {
+    $.ajax({
+    url: 'https://en.wikipedia.org/w/api.php',
+    data: {
+        action: 'opensearch',
+        limit: __GLOBAL_WV__.LIMIT,
+        search: this.value,
+        format: 'json'
+    },
+    dataType: 'jsonp',
+    success: autocompleteBoxBuild,
     });
 }
 
@@ -149,9 +152,7 @@ function searchWiki (search) {
         suggest: 1
     },
     dataType: 'jsonp',
-    success: function(data) {
-        createResultBox(data);
-    },
+    success: createResultBox,
     error: function(xhr, status, error){
         console.error(error);
     }
