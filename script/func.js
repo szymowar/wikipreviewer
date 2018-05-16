@@ -1,11 +1,10 @@
-
+'use strict';
 var __GLOBAL_WV__ = {};
     __GLOBAL_WV__.LIMIT = 10;
     __GLOBAL_WV__.AUTOCOMDATA = 1;
     __GLOBAL_WV__.KEY_CODE_DOWN_ARROW = 40
 
 function getRandomPost() {
-    "use strict";
     var rand = document.querySelector('#random'),
         url = "https://en.wikipedia.org/wiki/Special:Random";
 
@@ -15,32 +14,12 @@ function getRandomPost() {
 }
 
 function cleanContent(str) {
-    "use strict";
 	   var reg = /<.*?>/g;
     str = str.replace(reg, '');
     return str;
 }
 
-function removeActive(x){
-    for (var i = 0; i < x.length; i++) {
-        x[i].classList.remove("autocomplete-active");
-    }
-}
-
-function addActive(x){
-    if (!x){
-        return;
-    }
-        removeActive(x);
-    if (this.currentFocus >= x.length)
-        this.currentFocus = 0;
-    if (this.currentFocus < 0)
-        this.currentFocus = (x.length - 1);
-        x[this.currentFocus].classList.add("autocomplete-active");
-}
-
 function deleteItems(container) {
-    "use strict";
     if (container !== null) {
         while (container.firstChild) {
             container.removeChild(container.firstChild);
@@ -49,7 +28,6 @@ function deleteItems(container) {
 }
 
 function createResultBox(data) {
-    "use strict";
     var container = document.querySelector("#result-container"),
         i,
         linkBox,
@@ -114,7 +92,7 @@ function autocompleteBoxBuild (data) {
                 var x = container.getElementsByClassName("autocomplete")
                 if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
                     console.log(x[1].classList.add("autocomplete-active"));
-                    addActive(x);
+
                 }
             });
             container.addEventListener("click", function(e) {
@@ -127,12 +105,13 @@ function autocompleteBoxBuild (data) {
 
 
 function autocomplete() {
+    var searchValue = document.querySelector('#searchBar');
     $.ajax({
     url: 'https://en.wikipedia.org/w/api.php',
     data: {
         action: 'opensearch',
         limit: __GLOBAL_WV__.LIMIT,
-        search: this.value,
+        search: searchValue.value,
         format: 'json'
     },
     dataType: 'jsonp',
@@ -141,6 +120,7 @@ function autocomplete() {
 }
 
 function searchWiki (search) {
+    console.log("1",search);
     $.ajax({
     url: 'https://en.wikipedia.org/w/api.php',
     data: {
@@ -164,7 +144,7 @@ function active(){
 
     if (sb.value == "Search...") {
         sb.value = "";
-        sb.placeholder="Search..";
+        sb.placeholder="Search...";
     }
 }
 
@@ -177,9 +157,11 @@ function inactive(){
     }
 }
 function getWikiPost(e){
+    var searchValue = document.querySelector('#searchBar');
+    console.log(searchValue);
     var enterKey = 13;
-    if(e.keyCode == enterKey && this.value != ""){
-            searchWiki(this.value);
+    if(e.keyCode == enterKey && searchValue.value != ""){
+            searchWiki(searchValue);
         }
 }
 
@@ -187,8 +169,8 @@ $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
     var clearBtn = document.querySelector('#searchBtn');
     var cont = document.querySelector('#result-container');
-        searchValue.addEventListener("keydown", getWikiPost);
         searchValue.addEventListener("input", autocomplete);
+        searchValue.addEventListener("keydown", getWikiPost);
         clearBtn.addEventListener("click", function (e) {
             deleteItems(cont);
     });
