@@ -120,7 +120,6 @@ function autocomplete() {
 }
 
 function searchWiki (search) {
-    console.log("1",search);
     $.ajax({
     url: 'https://en.wikipedia.org/w/api.php',
     data: {
@@ -141,7 +140,6 @@ function searchWiki (search) {
 
 function active(){
     var sb = document.querySelector('#searchBar');
-
     if (sb.value == "Search...") {
         sb.value = "";
         sb.placeholder="Search...";
@@ -150,7 +148,6 @@ function active(){
 
 function inactive(){
     var sb = document.querySelector('#searchBar');
-
     if (sb.value == "") {
         sb.placeholder="";
         sb.value = "Search...";
@@ -161,7 +158,7 @@ function getWikiPost(e){
     console.log(searchValue);
     var enterKey = 13;
     if(e.keyCode == enterKey && searchValue.value != ""){
-            searchWiki(searchValue);
+            searchWiki(searchValue.value);
         }
 }
 
