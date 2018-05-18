@@ -14,10 +14,31 @@ function getWikiPost(e){
         }
 }
 
+function clickAutocomplete(e) {
+    var svalue = document.querySelector("#searchBar");
+    svalue.value = e.toElement.innerText;
+    deleteItems(container);
+}
+
 function removeActive(x) {
     for(var i = 0; i < x.length; i++){
         x[i].classList.remove("autocomplete-active");
     }
+}
+
+function addActive(x,currentFocus) {
+    if(!x){
+        return false;
+    }
+    removeActive(x);
+    if (currentFocus >= x.length){
+        currentFocus = 0;
+    }
+    if(currentFocus < 0) {
+        currentFocus = (x.length - 1);
+    }
+    console.log(currentFocus, x.length);
+    x[currentFocus].classList.add("autocomplete-active");
 }
 
 function getRandomPost() {
@@ -109,32 +130,18 @@ function autocompleteBoxBuild (data) {
                 var x = container.getElementsByClassName("autocomplete")
                 if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
                     currentFocus++;
-                    addActive(x);
+                    addActive(x, currentFocus);
                 }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_UP_ARROW) {
                     currentFocus--;
-                    addActive(x);
-                }
-                function addActive(x) {
-                    if(!x){
-                        return false;
-                    }
-                    removeActive(x);
-                    if (currentFocus >= x.length){
-                        currentFocus = 0;
-                    }
-                    if(currentFocus < 0) {
-                        currentFocus = (x.length - 1);
-                    }
-                    console.log(currentFocus, x.length);
-                    x[currentFocus].classList.add("autocomplete-active");
+                    addActive(x, currentFocus);
+                }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY) {
+                    searchB.value = x[currentFocus].innerText;
+                    deleteItems(container);
                 }
 
+
         });
-            container.addEventListener("click", function(e) {
-                var svalue = document.querySelector("#searchBar");
-                svalue.value = e.toElement.innerText;
-                deleteItems(container);
-            });
+            container.addEventListener("click", clickAutocomplete);
         };
         }
 
