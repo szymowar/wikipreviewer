@@ -2,7 +2,23 @@
 var __GLOBAL_WV__ = {};
     __GLOBAL_WV__.LIMIT = 10;
     __GLOBAL_WV__.AUTOCOMDATA = 1;
-    __GLOBAL_WV__.KEY_CODE_DOWN_ARROW = 40
+    __GLOBAL_WV__.KEY_CODE_DOWN_ARROW = 40;
+    __GLOBAL_WV__.KEY_CODE_UP_ARROW = 38;
+    __GLOBAL_WV__.KEY_CODE_ENTER_KEY = 13;
+
+function getWikiPost(e){
+    var searchValue = document.querySelector('#searchBar');
+    if(e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY && searchValue.value != ""){
+        e.preventDefault();
+        searchWiki(searchValue.value);
+        }
+}
+
+function removeActive(x) {
+    for(var i = 0; i < x.length; i++){
+        x[i].classList.remove("autocomplete-active");
+    }
+}
 
 function getRandomPost() {
     var rand = document.querySelector('#random'),
@@ -69,6 +85,7 @@ function createResultBox(data) {
         }
 
 function autocompleteBoxBuild (data) {
+        var currentFocus = -1;
         var container = document.querySelector("#autocompleteContainer"),
             aD = data[1];
             deleteItems(container);
@@ -88,13 +105,31 @@ function autocompleteBoxBuild (data) {
             }
             var searchB = document.getElementById("searchBar");
             searchB.addEventListener("keydown", function(e) {
-                var currentFocus = 0;
+
                 var x = container.getElementsByClassName("autocomplete")
                 if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
-                    console.log(x[1].classList.add("autocomplete-active"));
-
+                    currentFocus++;
+                    addActive(x);
+                }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_UP_ARROW) {
+                    currentFocus--;
+                    addActive(x);
                 }
-            });
+                function addActive(x) {
+                    if(!x){
+                        return false;
+                    }
+                    removeActive(x);
+                    if (currentFocus >= x.length){
+                        currentFocus = 0;
+                    }
+                    if(currentFocus < 0) {
+                        currentFocus = (x.length - 1);
+                    }
+                    console.log(currentFocus, x.length);
+                    x[currentFocus].classList.add("autocomplete-active");
+                }
+
+        });
             container.addEventListener("click", function(e) {
                 var svalue = document.querySelector("#searchBar");
                 svalue.value = e.toElement.innerText;
@@ -104,7 +139,7 @@ function autocompleteBoxBuild (data) {
         }
 
 
-function autocomplete() {
+function autocomplete(e) {
     var searchValue = document.querySelector('#searchBar');
     $.ajax({
     url: 'https://en.wikipedia.org/w/api.php',
@@ -153,17 +188,11 @@ function inactive(){
         sb.value = "Search...";
     }
 }
-function getWikiPost(e){
-    var searchValue = document.querySelector('#searchBar');
-    console.log(searchValue);
-    var enterKey = 13;
-    if(e.keyCode == enterKey && searchValue.value != ""){
-            searchWiki(searchValue.value);
-        }
-}
+
 
 $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
+    var search = document.querySelector('#searchBar');
     var clearBtn = document.querySelector('#searchBtn');
     var cont = document.querySelector('#result-container');
         searchValue.addEventListener("input", autocomplete);
