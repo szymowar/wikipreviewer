@@ -5,6 +5,7 @@ var __GLOBAL_WV__ = {};
     __GLOBAL_WV__.KEY_CODE_DOWN_ARROW = 40;
     __GLOBAL_WV__.KEY_CODE_UP_ARROW = 38;
     __GLOBAL_WV__.KEY_CODE_ENTER_KEY = 13;
+var currentFocus = -1;
 
 function getWikiPost(e){
     var searchValue = document.querySelector('#searchBar');
@@ -105,34 +106,33 @@ function autocompleteBoxBuild (data) {
             container.addEventListener("click", clickAutocomplete);
         };
         }
-function autocompleteToggle(e) {
-    var currentFocus = -1;
-        
-    var container = document.querySelector("#autocompleteContainer");
-        function removeActive(x) {
-            for(var i = 0; i < x.length; i++){
-                x[i].classList.remove("autocomplete-active");
-                }
-            }
-        function addActive(x) {
-            if(!x){
-                return false;
-            }
-            removeActive(x);
-            if (currentFocus >= x.length){
-                currentFocus = 0;
 
-            }
-            if(currentFocus < 0) {
-                currentFocus = (x.length - 1);
-            }
-            console.log(currentFocus, x.length);
-            x[currentFocus].classList.add("autocomplete-active");
+
+function removeActive(x) {
+    for(var i = 0; i < x.length; i++){
+        x[i].classList.remove("autocomplete-active");
         }
-        var x = container.getElementsByClassName("autocomplete")
+    }
+
+function addActive(x) {
+    if(!x){
+        return false;
+    }
+    removeActive(x);
+    if (currentFocus >= x.length){
+        currentFocus = 0;
+    }
+    if(currentFocus < 0) {
+        currentFocus = (x.length - 1);
+    }
+    x[currentFocus].classList.add("autocomplete-active");
+}
+
+function autocompleteToggle(e) {
+    var container = document.querySelector("#autocompleteContainer");
+    var x = container.getElementsByClassName("autocomplete")
         if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
             currentFocus++;
-            console.log("2", currentFocus);
             addActive(x);
         }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_UP_ARROW) {
             currentFocus--;
@@ -200,7 +200,7 @@ $(document).ready(function () {
     var cont = document.querySelector('#result-container');
         searchValue.addEventListener("input", autocomplete);
         searchValue.addEventListener("keydown", getWikiPost);
-        searchValue.addEventListener("keydown", autocompleteToggle)
+        searchValue.addEventListener("keydown", autocompleteToggle);
         clearBtn.addEventListener("click", function (e) {
             deleteItems(cont);
     });
