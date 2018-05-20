@@ -148,6 +148,7 @@ Search bar
   autocomplete
 =============================================================================*/
 .autocomplete {
+
 	display: block;
 	cursor: pointer;
 }

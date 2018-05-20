@@ -16,6 +16,7 @@ function getWikiPost(e){
 }
 
 function clickAutocomplete(e) {
+    var container = document.querySelector("#autocompleteContainer")
     var svalue = document.querySelector("#searchBar");
     svalue.value = e.toElement.innerText;
     deleteItems(container);
@@ -125,10 +126,14 @@ function addActive(x) {
     if(currentFocus < 0) {
         currentFocus = (x.length - 1);
     }
+    if(x[currentFocus] == undefined) {
+        return false;
+    }
     x[currentFocus].classList.add("autocomplete-active");
 }
 
 function autocompleteToggle(e) {
+    var searchValue = document.querySelector('#searchBar');
     var container = document.querySelector("#autocompleteContainer");
     var x = container.getElementsByClassName("autocomplete")
         if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
@@ -138,7 +143,7 @@ function autocompleteToggle(e) {
             currentFocus--;
             addActive(x);
         }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY) {
-            searchB.value = x[currentFocus].innerText;
+            searchValue.value = x[currentFocus].innerText;
             deleteItems(container);
             }
         }
@@ -203,6 +208,7 @@ $(document).ready(function () {
         searchValue.addEventListener("keydown", autocompleteToggle);
         clearBtn.addEventListener("click", function (e) {
             deleteItems(cont);
+            searchValue.value = "Search...";
     });
     getRandomPost();
 });
