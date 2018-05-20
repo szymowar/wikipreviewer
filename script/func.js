@@ -20,27 +20,6 @@ function clickAutocomplete(e) {
     deleteItems(container);
 }
 
-function removeActive(x) {
-    for(var i = 0; i < x.length; i++){
-        x[i].classList.remove("autocomplete-active");
-    }
-}
-
-function addActive(x,currentFocus) {
-    if(!x){
-        return false;
-    }
-    removeActive(x);
-    if (currentFocus >= x.length){
-        currentFocus = 0;
-    }
-    if(currentFocus < 0) {
-        currentFocus = (x.length - 1);
-    }
-    console.log(currentFocus, x.length);
-    x[currentFocus].classList.add("autocomplete-active");
-}
-
 function getRandomPost() {
     var rand = document.querySelector('#random'),
         url = "https://en.wikipedia.org/wiki/Special:Random";
@@ -106,7 +85,6 @@ function createResultBox(data) {
         }
 
 function autocompleteBoxBuild (data) {
-        var currentFocus = -1;
         var container = document.querySelector("#autocompleteContainer"),
             aD = data[1];
             deleteItems(container);
@@ -124,27 +102,46 @@ function autocompleteBoxBuild (data) {
                             container.appendChild(autocompleteBox);
                     }
             }
-            var searchB = document.getElementById("searchBar");
-            searchB.addEventListener("keydown", function(e) {
-
-                var x = container.getElementsByClassName("autocomplete")
-                if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
-                    currentFocus++;
-                    addActive(x, currentFocus);
-                }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_UP_ARROW) {
-                    currentFocus--;
-                    addActive(x, currentFocus);
-                }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY) {
-                    searchB.value = x[currentFocus].innerText;
-                    deleteItems(container);
-                }
-
-
-        });
             container.addEventListener("click", clickAutocomplete);
         };
         }
+function autocompleteToggle(e) {
+    var currentFocus = -1;
+        
+    var container = document.querySelector("#autocompleteContainer");
+        function removeActive(x) {
+            for(var i = 0; i < x.length; i++){
+                x[i].classList.remove("autocomplete-active");
+                }
+            }
+        function addActive(x) {
+            if(!x){
+                return false;
+            }
+            removeActive(x);
+            if (currentFocus >= x.length){
+                currentFocus = 0;
 
+            }
+            if(currentFocus < 0) {
+                currentFocus = (x.length - 1);
+            }
+            console.log(currentFocus, x.length);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        var x = container.getElementsByClassName("autocomplete")
+        if (e.keyCode == __GLOBAL_WV__.KEY_CODE_DOWN_ARROW){
+            currentFocus++;
+            console.log("2", currentFocus);
+            addActive(x);
+        }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_UP_ARROW) {
+            currentFocus--;
+            addActive(x);
+        }else if (e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY) {
+            searchB.value = x[currentFocus].innerText;
+            deleteItems(container);
+            }
+        }
 
 function autocomplete(e) {
     var searchValue = document.querySelector('#searchBar');
@@ -199,11 +196,11 @@ function inactive(){
 
 $(document).ready(function () {
     var searchValue = document.querySelector('#searchBar');
-    var search = document.querySelector('#searchBar');
     var clearBtn = document.querySelector('#searchBtn');
     var cont = document.querySelector('#result-container');
         searchValue.addEventListener("input", autocomplete);
         searchValue.addEventListener("keydown", getWikiPost);
+        searchValue.addEventListener("keydown", autocompleteToggle)
         clearBtn.addEventListener("click", function (e) {
             deleteItems(cont);
     });

@@ -149,6 +149,10 @@ Search bar
 =============================================================================*/
 .autocomplete {
 	display: block;
+	cursor: pointer;
+}
+.autocomplete div:hover {
+	background-color: blue;
 }
 .autocomplete-active {
 	border: 5px solid red;
