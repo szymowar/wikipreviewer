@@ -74,6 +74,7 @@ function createResultBox(data) {
         title = document.createElement("H3");
         para = document.createElement("P");
         linkBox.setAttribute("href", urlRedirect + data.query.search[i].pageid);
+        linkBox.setAttribute("target", "_blank");
         wikiTitle = document.createTextNode(data.query.search[i].title);
         wikiSnippet = cleanContent(data.query.search[i].snippet);
         wikiSnippet = document.createTextNode(wikiSnippet);
