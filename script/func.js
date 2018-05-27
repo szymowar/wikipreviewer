@@ -7,6 +7,13 @@ var __GLOBAL_WV__ = {};
     __GLOBAL_WV__.KEY_CODE_ENTER_KEY = 13;
 var currentFocus = -1;
 
+function clickOutside(e) {
+    if(!e.target.matches('.autocomplete')){
+        var autCont = document.getElementById('autocompleteContainer');
+        deleteItems(autCont);
+    }
+}
+
 function getWikiPost(e){
     var searchValue = document.querySelector('#searchBar');
     if(e.keyCode == __GLOBAL_WV__.KEY_CODE_ENTER_KEY && searchValue.value != ""){
@@ -212,4 +219,5 @@ $(document).ready(function () {
             searchValue.value = "Search...";
     });
     getRandomPost();
+    window.onclick = function(e){clickOutside(e)};
 });
